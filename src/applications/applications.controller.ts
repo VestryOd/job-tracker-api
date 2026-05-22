@@ -18,7 +18,10 @@ import { ApplicationsService } from './applications.service';
 import { QueryApplicationDto } from './dto/query-application.dto';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('applications')
+@ApiBearerAuth()
 @Controller('applications')
 @UseGuards(JwtAuthGuard)
 export class ApplicationsController {
