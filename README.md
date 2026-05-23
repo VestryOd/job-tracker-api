@@ -45,8 +45,27 @@ In the same time it's a pet project to refresh my backend skills and fill gaps i
 - **Separation of concerns** — controllers handle HTTP (parsing, status codes), services own business logic, guards handle auth; no business logic leaks into the HTTP layer
 
 ## Architecture
-[diagram placeholder — add in Phase 7]
-// TODO
+
+```mermaid
+graph TD
+
+      Client -->|POST /auth/login| AuthController
+      AuthController --> AuthService
+      AuthService --> UsersService
+      UsersService --> PostgreSQL
+      AuthService -->|JWT| Client
+
+      Client -->|GET /applications + Bearer| JwtAuthGuard
+      JwtAuthGuard --> ApplicationsController
+      ApplicationsController --> ApplicationsService
+      ApplicationsService --> PostgreSQL
+
+      Client -->|POST presigned-upload| FilesController
+      FilesController --> FilesService
+      FilesService --> S3Service
+      S3Service -->|Presigned URL| Client
+      Client -->|PUT file directly| S3[(LocalStack S3)]
+```
 
 ## Getting Started
 
@@ -82,9 +101,29 @@ npm run start:dev
 The API will be available at `http://localhost:3000`.
 
 ## API Overview
-[table or list of endpoints — fill in Phase 7]
-// TODO
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/auth/register` | — | Register a new user |
+| POST | `/auth/login` | — | Login and receive JWT |
+| GET | `/applications` | Bearer | List all job applications |
+| POST | `/applications` | Bearer | Create a new application |
+| GET | `/applications/:id` | Bearer | Get a single application |
+| PATCH | `/applications/:id` | Bearer | Update an application |
+| DELETE | `/applications/:id` | Bearer | Delete an application |
+| POST | `/files/presigned-upload` | Bearer | Get a presigned S3 URL for file upload |
+
+Full interactive docs are available via Swagger at `http://localhost:3000/api` when the server is running.
 
 ## Running Tests
-[fill in Phase 5]
-// TODO
+
+```bash
+# Unit tests
+npm run test
+
+# Unit tests with coverage
+npm run test:cov
+
+# End-to-end tests
+npm run test:e2e
+```
